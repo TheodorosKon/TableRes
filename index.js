@@ -34,7 +34,7 @@ app.post('/Restaurant', function (req, res) {
       let str = data;
       console.table(data);
 
-      res.sendFile(path.join(__dirname + "/restaurant.html", { rest: parseInt(reqData) }));
+      res.sendFile(path.join(__dirname + "/restaurant.html"));
     });
   });
     
@@ -99,8 +99,7 @@ app.get('/Tables', function (req, res) {
         console.error(err.message);
       }
       let str = data;
-
-      res.json(JSON.stringify(data));
+      res.send(data);
     });
   });
     

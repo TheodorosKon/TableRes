@@ -6,27 +6,38 @@
     </head>
     <body>
         <form action="/reservations" method="post">
-            <h1>Welcome to Restaurant %% reservation system</h1><br></br>
+            <h1>Welcome to Restaurant X reservation system</h1><br></br>
             Select a Restaurant: 
-            <form>
-                <select name='restaurant' id='restaurant'>
-                    
-                </select>
-            </form>
+            <select name='tables' id='tables'>
+                
+            </select>
+            <input type="submit" id="query" value="Reserve"/>
         </form>
-        <input type="submit" id="query" value="Reserve"/>
     </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        //GetTables();
+        var _GlobalTable = '';
+        GetTables();
+
         window.setInterval(function(){
-            //GetTables();
-        }, 3000);   
-        
+            GetTables();
+        }, 5000);
+
         function GetTables() {
             const Http = new XMLHttpRequest();
-            Http.open("GET", 'http://localhost:8080/Tables?rest=%%');
+            Http.open("GET", 'http://localhost:8080/Tables?rest=1');            
+            Http.send();
             Http.onreadystatechange = (e) => {
-                console.log(Http.responseText);
+                if(Http.status == 200 && Http.readyState == 4){
+                    var str = '';
+                    if(_GlobalTable != JSON.parse(Http.response)){
+                        _GlobalTable = JSON.parse(Http.response);
+                        for(var i = 0; i < JSON.parse(Http.response).length; i++){
+                            str = str + '<option value=' + JSON.parse(Http.response)[i]['TableNumber'] + '>' + JSON.parse(Http.response)[i]['TableNumber'] + '</option>';
+                        }
+                        $('#tables').find('option').remove().end().append(str);
+                    }
+                }
             }
         }
     </script>
