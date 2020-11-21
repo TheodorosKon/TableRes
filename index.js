@@ -57,17 +57,15 @@ app.post('/Reservations', function (req, res) {
       if(err) console.log(err);
       console.log("Connected to the database")
   });
-
-  let reserve = req.body.reservations;
-
+  console.log(req.body.tables);
+  let reserve = req.body.tables;
   db.serialize(() => {
-    db.all(`SELECT * FROM Tables WHERE ID=`+parseInt(reserve), (err, data) => {
+    db.run(`UPDATE Tables SET Waiting=1 WHERE TableNumber=`+ reserve +` AND RestaurantID=1`, (err, data) => {
       if (err) {
         console.error(err.message);
       }
       let h = '<h1 style="background:red;color:whitesmoke;margin:20px solid red;">Waiting for response for Table ' + parseInt(reserve) + '</h1>';
-      let str = data.ID;
-      console.table(data);
+      let str = reserve;
       res.send(h+str);
     });
   });
@@ -112,21 +110,3 @@ app.get('/Tables', function (req, res) {
 const webserver = app.listen(8080, function () {
     console.log("Node Web Server is running..")
 });
-
-/*const https = require('https');
-            https.get('https://localhost:8080?rest1=1', (resp) => {
-            let data = '';
-
-            // A chunk of data has been recieved.
-            resp.on('data', (chunk) => {
-                data += chunk;
-                console.log(data);
-            });
-
-            // The whole response has been received. Print out the result.
-            resp.on('end', () => {
-                console.log(JSON.parse(data).explanation);
-            });
-
-            }).on("error", (err) => {
-            console.log("Error: " + err.message);*/
