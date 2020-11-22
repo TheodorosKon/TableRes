@@ -33,7 +33,7 @@
                     if(_GlobalTable != JSON.parse(Http.response)){
                         _GlobalTable = JSON.parse(Http.response);
                         for(var i = 0; i < JSON.parse(Http.response).length; i++){
-                            str = str + '<option value=' + JSON.parse(Http.response)[i]['TableNumber'] + '>' + JSON.parse(Http.response)[i]['TableNumber'] + '</option>';
+                            str = str + '<option value=' + JSON.parse(Http.response)[i]['TableID'] + '>' + JSON.parse(Http.response)[i]['TableID'] + JSON.parse(Http.response)[i]['FirstName'] + ' ' + JSON.parse(Http.response)[i]['LastName'] + ' ' + JSON.parse(Http.response)[i]['Date'] + '</option>';
                         }
                         $('#tables').find('option').remove().end().append(str);
                     }

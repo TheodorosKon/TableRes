@@ -11,6 +11,14 @@
             <select name='tables' id='tables'>
                 
             </select>
+            First Name:
+            <input type="text" id="firstName"/>
+            Last Name:
+            <input type="text" id="lastName"/>
+            Day:
+            <input type="text" id="day"/>
+            Month:
+            <input type="text" id="month"/>
             <input type="submit" id="query" value="Reserve"/>
         </form>
     </body>
@@ -24,8 +32,10 @@
         }, 5000);
 
         function GetTables() {
+            var day = $('#day').val();
+            var month = $('#month').val();
             const Http = new XMLHttpRequest();
-            Http.open("GET", 'http://localhost:8080/Tables?rest=1');            
+            Http.open("GET", 'http://localhost:8080/Tables?rest=1&day=' + day + '&month=' + month);            
             Http.send();
             Http.onreadystatechange = (e) => {
                 if(Http.status == 200 && Http.readyState == 4){
@@ -40,5 +50,12 @@
                 }
             }
         }
+
+        $("#day").on('change keydown paste input', function(){
+            GetTables();
+        });
+        $("#month").on('change keydown paste input', function(){
+            GetTables();
+        });
     </script>
 </html>

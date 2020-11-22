@@ -90,10 +90,12 @@ app.get('/Tables', function (req, res) {
     console.log("Connected to the database")
   });
 
-  let reqData = req.query.rest;
+  let rest = req.query.rest;
+  let day = req.query.day;
+  let month = req.query.month;
 
   db.serialize(() => {
-    db.all(`SELECT * FROM Tables WHERE RestaurantID=`+parseInt(reqData)+` AND Reserved=0`, (err, data) => {
+    db.all(`SELECT * FROM Tables LEFT JOIN Reservations ON Reservations.TableID = Tables.ID WHERE RestaurantID=` + parseInt(rest) + ` AND Reservations.ID IS NULL`, (err, data) => {
       if (err) {
         console.error(err.message);
       }
