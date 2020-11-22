@@ -16,13 +16,24 @@
 
         function GetTables() {
             const Http = new XMLHttpRequest();
-            Http.open("GET", 'http://localhost:8080/CheckTable?table=1');            
+            Http.open("GET", 'http://localhost:8080/CheckTable?table=' + getCookie('table') + '&rest=' + getCookie('rest') + '&day=' + getCookie('day') + '&month=' + getCookie('month'));            
             Http.send();
             Http.onreadystatechange = (e) => {
                 if(Http.response == 'Reserved'){
                     $('#check').css('background', 'green');
                 }
             }
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
         }
     </script>
 </html>

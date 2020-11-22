@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
+const { Console } = require('console');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -57,15 +58,23 @@ app.post('/Reservations', function (req, res) {
       if(err) console.log(err);
       console.log("Connected to the database")
   });
-  console.log(req.body.tables);
-  let reserve = req.body.tables;
+  let id = '';
   db.serialize(() => {
-    db.run(`UPDATE Tables SET Waiting=1 WHERE TableNumber=`+ reserve +` AND RestaurantID=1 AND Waiting=0`, (err, data) => {
+    console.log('select');
+    db.all(`SELECT * FROM Tables WHERE TableNumber=`+ parseInt(req.body.tables) + ` AND RestaurantID=1` , (err, data) => {
       if (err) {
         console.error(err.message);
       }
-      let h = '<h1 style="background:red;color:whitesmoke;margin:20px solid red;">Waiting for response for Table ' + parseInt(reserve) + '</h1><script></script>';
-      let str = reserve;
+      id = data[0]['ID'];
+    });
+    let date = req.body.day + '-' + req.body.month;
+    console.log('insert');
+    db.run(`INSERT INTO Reservations (RestID, TableNum, FirstName, LastName, Date) VALUES (` + req.body.rest + `, '` + req.body.tables + `', '` + req.body.firstName + `', '` + req.body.lastName + `', '` + date + `')`, (err, data) => {
+      if (err) {
+        console.error(err.message);
+      }
+      //let h = '<h1 style="background:red;color:whitesmoke;margin:20px solid red;">Waiting for response for Table ' + parseInt(reserve) + '</h1><script></script>';
+      //let str = reserve;
       //res.send(h+str);
       res.sendFile(path.join(__dirname + "/reservations.html"));
     });
@@ -93,9 +102,9 @@ app.get('/Tables', function (req, res) {
   let rest = req.query.rest;
   let day = req.query.day;
   let month = req.query.month;
-
+  console.log(rest);
   db.serialize(() => {
-    db.all(`SELECT * FROM Tables LEFT JOIN Reservations ON Reservations.TableID = Tables.ID WHERE RestaurantID=` + parseInt(rest) + ` AND Reservations.ID IS NULL`, (err, data) => {
+    db.all(`SELECT * FROM Tables LEFT JOIN Reservations ON Reservations.TableNum = Tables.TableNumber WHERE RestaurantID=` + parseInt(rest) + ` AND Reservations.ID IS NULL`, (err, data) => {
       if (err) {
         console.error(err.message);
       }
@@ -120,11 +129,9 @@ app.get('/CheckTable', function (req, res) {
     if(err) console.log(err);
     console.log("Connected to the database")
   });
-
-  let reqData = req.query.table;
-  console.log(reqData);
+  console.log(req.query);
   db.serialize(() => {
-    db.all(`SELECT * FROM Tables WHERE RestaurantID=1 AND Reserved=1 AND TableNumber=`+parseInt(reqData), (err, data) => {
+    db.all(`SELECT * FROM Reservations WHERE TableNum=` + req.query.table + ` AND Date=` + req.query.day + '-' + req.query.month + ' AND RestID=' + req.query.rest, (err, data) => {
       if (err) {
         console.error(err.message);
       }

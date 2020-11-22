@@ -24,7 +24,7 @@ app.get('/Reservations', function (req, res) {
 	let reqData = req.query.rest;
   
 	db.serialize(() => {
-	  db.all(`SELECT * FROM Reservations WHERE RestaurantID=`+parseInt(reqData)+` AND Confirmation=0`, (err, data) => {
+	  db.all(`SELECT * FROM Reservations WHERE RestID=`+parseInt(reqData)+` AND Confirmation=0`, (err, data) => {
 		if (err) {
 		  console.error(err.message);
 		}

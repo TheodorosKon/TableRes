@@ -8,22 +8,30 @@
         <form action="/reservations" method="post">
             <h1>Welcome to Restaurant X reservation system</h1><br></br>
             Select a Restaurant: 
-            <select name='tables' id='tables'>
-                
-            </select>
-            First Name:
-            <input type="text" id="firstName"/>
-            Last Name:
-            <input type="text" id="lastName"/>
-            Day:
-            <input type="text" id="day"/>
-            Month:
-            <input type="text" id="month"/>
+            <div id='form-group'>
+                <input type="hidden" name='rest'  id="rest"/>
+                <select name='tables' id='tables' onchange="SelectHelper()")></select>
+                First Name:
+                <input type="text" name='firstName' id="firstName"/>
+                Last Name:
+                <input type="text" name='lastName'  id="lastName"/>
+                Day:
+                <input type="text" name='day'  id="day"/>
+                Month:
+                <input type="text" name='month'  id="month"/>
+            </div>
             <input type="submit" id="query" value="Reserve"/>
         </form>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+
+        function SelectHelper(){
+            setCookie('table', $('#tables').val());
+        }
+
+        $('#rest').val(getCookie('rest'));
+
         var _GlobalTable = '';
         GetTables();
 
@@ -35,7 +43,7 @@
             var day = $('#day').val();
             var month = $('#month').val();
             const Http = new XMLHttpRequest();
-            Http.open("GET", 'http://localhost:8080/Tables?rest=1&day=' + day + '&month=' + month);            
+            Http.open("GET", 'http://localhost:8080/Tables?rest=' + getCookie('rest') + '&day=' + day + '&month=' + month);            
             Http.send();
             Http.onreadystatechange = (e) => {
                 if(Http.status == 200 && Http.readyState == 4){
@@ -53,9 +61,30 @@
 
         $("#day").on('change keydown paste input', function(){
             GetTables();
+            setCookie('day', $("#day").val());
         });
         $("#month").on('change keydown paste input', function(){
             GetTables();
+            setCookie('month', $("#month").val());
         });
+
+        function setCookie(name, value) {
+            var expires = "";
+            var date = new Date();
+            date.setTime(date.getTime() + (1*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
     </script>
 </html>
